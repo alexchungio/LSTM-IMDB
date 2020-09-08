@@ -44,18 +44,16 @@ class LSTM(object):
         self.encode_outputs = tf.nn.embedding_lookup(tf.Variable(tf.random.uniform([self.feature_size, self.embedded_size], -1, 1), name="embedding"),
                                                        ids=self.input_data)
 
-        # rnn cell
+        # multi lstm cell
         cells = [tf.nn.rnn_cell.DropoutWrapper(self.get_lstm_cell(self.num_units[i]),
                                                input_keep_prob=self.keep_prob,
                                                output_keep_prob=self.keep_prob)
                  for i in range(self.num_layers)]
 
+        # multi layer lstm
         lstm_cells = tf.nn.rnn_cell.MultiRNNCell(cells, state_is_tuple=True)
-        # print(rnn_cells.state_size)  # (64, 128, 256)
-        # initial_state = rnn_cells.zero_state(BATCH_SIZE, dtype=tf.float32)
 
         lstm_outputs, lstm_states = tf.nn.dynamic_rnn(cell=lstm_cells, inputs=self.encode_outputs, dtype=tf.float32, scope="lstm")
-
 
         self.logits = self.fully_connected(inputs=lstm_outputs[:, -1, :], output_size=self.num_outputs)
         self.predict = tf.sigmoid(self.logits, name="predict")
