@@ -17,21 +17,24 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import imdb
 from tensorflow.keras import preprocessing
+from tensorflow.keras.preprocessing.text import Tokenizer
 
 from libs.configs import cfgs
 from data.dataset_pipeline import dataset_batch
 from libs.nets.model import LSTM
 
+glove_dir = './data/glove.6B'
 
 def main(argv):
 
     # -------------------load dataset-------------------------------------------
-    (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=cfgs.FEATURE_SIZE)
 
+    (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=cfgs.FEATURE_SIZE)
+    word_index = imdb.get_word_index()
+    word_index = dict(sorted(word_index.items(), key=lambda kv: (kv[1], kv[0]))) # sort word index
     # use train dataset to train and validation model
     x_dataset = x_train
     y_dataset = y_train
-
     # turn the samples into 2D tensor of shape (num_samples, max_length)
     x_dataset = preprocessing.sequence.pad_sequences(x_dataset, cfgs.MAX_LENGTH)
     y_dataset = np.asarray(y_dataset).astype(np.float32)
@@ -79,8 +82,29 @@ def main(argv):
         model_variable = tf.global_variables()
         for var in model_variable:
             print(var.op.name, var.shape)
-        # get and add histogram to summary protocol buffer
 
+        #------------------load embedding pretrained weights---------------------
+        # parse glove pretrained model
+        if cfgs.EMBEDDING_TRANSFER:
+            embedding_index = {}
+            with open(os.path.join(glove_dir, 'glove.6B.100d.txt')) as f:
+                for line in f:
+                    value = line.split()
+                    word = value[0]
+                    coeff = value[1:]
+                    embedding_index[word] = coeff
+
+        embedding_matrix = np.zeros(shape=(cfgs.FEATURE_SIZE, cfgs.EMBEDDING_SIZE))
+        for word, index in word_index.items():
+            if index < cfgs.FEATURE_SIZE:
+                embedding_vector = embedding_index.get(word)
+                if embedding_vector is not None:
+                    embedding_matrix[index] = embedding_vector
+
+        embedding_variable = tf.global_variables(scope='embedding')
+        tf.assign(embedding_variable[0], tf.convert_to_tensor(embedding_matrix, dtype=tf.float32))
+        print('+++++++++++++++++++++Successful load glove embedding weights+++++++++++++++++++++++')
+        # -----------------------train part------------------------------------------------
         # merges all summaries collected in the default graph
         summary_op = tf.summary.merge_all()
 

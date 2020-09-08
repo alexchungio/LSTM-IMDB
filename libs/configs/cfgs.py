@@ -20,7 +20,6 @@ import tensorflow as tf
 VERSION = 'LSTM_IMDB_20200908'
 NET_NAME = 'lstm_imdb'
 
-
 # ---------------------------------------- System_config
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print (20*"++--")
@@ -44,14 +43,17 @@ BATCH_SIZE = 32
 
 MAX_LENGTH = 500 # the number in singe time dimension of a single sequence of input data
 FEATURE_SIZE = 10000
-EMBEDDING_SIZE = 32
-
+EMBEDDING_SIZE = 100
 
 # NUM_UNITS = [128, 64, 32]
 NUM_UNITS = [32, 16]
 NUM_LAYERS = 2
 
 #-------------------------train config-------------------------------
+EMBEDDING_TRANSFER = True
 LEARNING_RATE = 0.01
 NUM_EPOCH = 5
-KEPP_PROB = 1.0
+KEEP_PROB = 0.8
+
+# data
+SPLIT_RATIO = 0.2
