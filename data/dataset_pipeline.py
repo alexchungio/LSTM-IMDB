@@ -24,7 +24,7 @@ data_dir = '/home/alex/Documents/dataset/flower_photos'
 
 
 
-def dataset_batch( x, y, batch_size=32, epoch=10):
+def dataset_batch(x, y, batch_size=32, epoch=None, is_training=False):
     """
     create dataset iterator
     :param data_dir:
@@ -41,13 +41,17 @@ def dataset_batch( x, y, batch_size=32, epoch=10):
     dataset = tf.data.Dataset.from_tensor_slices((x, y))
 
     # shuffle batch_size epoch
-    dataset = dataset.shuffle(buffer_size=batch_size * 4).batch(batch_size).repeat(epoch)
+    if is_training:
+        dataset = dataset.shuffle(buffer_size=batch_size * 4)
 
+    # get batch
+    dataset = dataset.batch(batch_size).repeat(epoch)
     # lets the dataset fetch batches in the background while the model is training.
     dataset = dataset.prefetch(buffer_size=batch_size * 10)
 
     # return iterator
     return dataset.make_one_shot_iterator()
+
 
 
 
@@ -64,7 +68,8 @@ if __name__ == "__main__":
     train_data_batch, train_label_batch = dataset_iterator.get_next()
 
     with tf.Session() as sess:
-        # print(sess.run('vgg_16/conv1/conv1_1/biases:0'))
-        train_data, train_label = sess.run([train_data_batch, train_label_batch])
+        for _ in range(10):
+            # print(sess.run('vgg_16/conv1/conv1_1/biases:0'))
+            train_data, train_label = sess.run([train_data_batch, train_label_batch])
 
-        print(len(train_data))
+            print(train_data)
