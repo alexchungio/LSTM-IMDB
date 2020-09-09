@@ -14,13 +14,12 @@ import os
 import numpy as np
 import tensorflow.compat.v1 as tf
 from tqdm import tqdm
-import matplotlib.pyplot as plt
+import json
 from tensorflow.keras.datasets import imdb
 from tensorflow.keras import preprocessing
 from tensorflow.keras.preprocessing.text import Tokenizer
 
 from libs.configs import cfgs
-import json
 from data.dataset_pipeline import dataset_batch
 from libs.nets.model import LSTM
 
