@@ -40,11 +40,14 @@ def encoder_text(texts, word_index, num_words, filters='!"#$%&()*+,-./:;<=>?@[\\
     sequences = []
     for text in texts:
         sequence = []
+        # convert text to lowercase
         if lower:
             text = text.lower()
+        # filter special character
         translate_dict = dict((c, split) for c in filters)
         translate_map = str.maketrans(translate_dict)
         text = text.translate(translate_map)
+        # get word index
         for word in text.split(split):
             index = word_index.get(word)
             if index is not None and index < num_words:

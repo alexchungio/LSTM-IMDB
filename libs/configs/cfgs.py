@@ -37,6 +37,7 @@ INFERENCE_IMAGE_PATH = ROOT_PATH + '/outputs/inference_image'
 
 TRAINED_CKPT = os.path.join(ROOT_PATH, 'outputs/trained_weights')
 EVALUATE_DIR = ROOT_PATH + '/outputs/evaluate_result'
+WORD_INDEX = ROOT_PATH + '/outputs/word_index.json'
 
 #------------------------network config--------------------------------
 BATCH_SIZE = 32
@@ -50,9 +51,9 @@ NUM_UNITS = [32, 16]
 NUM_LAYERS = 2
 
 #-------------------------train config-------------------------------
-EMBEDDING_TRANSFER = True
+EMBEDDING_TRANSFER = False
 LEARNING_RATE = 0.01
-NUM_EPOCH = 5
+NUM_EPOCH = 10
 KEEP_PROB = 0.8
 
 # data
