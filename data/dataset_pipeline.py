@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import imdb
 from tensorflow.keras import preprocessing
 from libs.configs import cfgs
-
+from sklearn.model_selection import KFold
 
 data_dir = '/home/alex/Documents/dataset/flower_photos'
 
@@ -53,10 +53,7 @@ def dataset_batch(x, y, batch_size=32, epoch=None, is_training=False):
     return dataset.make_one_shot_iterator()
 
 
-
-
 if __name__ == "__main__":
-
 
     (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=cfgs.FEATURE_SIZE)
     x_train = preprocessing.sequence.pad_sequences(x_train, cfgs.MAX_LENGTH)
